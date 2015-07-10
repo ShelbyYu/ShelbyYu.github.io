@@ -85,6 +85,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/07/10/Android-Palette的实现原理/" title="【转】Android Palette的实现原理" itemprop="url">【转】Android Palette的实现原理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-10T03:33:53.000Z" itemprop="datePublished"> 发表于 2015-07-10 11:33</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><strong>转自：<a href="http://www.2cto.com/kf/201501/373806.html">http://www.2cto.com/kf/201501/373806.html</a></strong></p>
+<p>　　有时候，看到一些界面上的色彩，心情可能会很舒畅，有时候，看到一些其他色彩，就觉得很讨厌，不爽，看到android L Palette 从图片中提取筛选出来的颜色，觉得都挺好看的，就去了解了下Palette调色板。<br><br>　　看了代码，根据我的理解，大概说说主要的步骤：<br><br>　　<strong>第一步，将图片缩小，再整个过程中，可以降低计算量和减少内存的使用，跟不缩小也能达到一样的效果</strong><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">     * Scale the bitmap down so that it's smallest dimension is</span><br><span class="line">     * &#123;<span class="doctag">@value</span> #CALCULATE_BITMAP_MIN_DIMENSION&#125;px. If &#123;<span class="doctag">@code</span> bitmap&#125; is smaller than this, than it</span><br><span class="line">     * is returned.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">scaleBitmapDown</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> minDimension = Math.min(bitmap.getWidth(), bitmap.getHeight());</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (minDimension &lt;= CALCULATE_BITMAP_MIN_DIMENSION) &#123;</span><br><span class="line">            <span class="comment">// If the bitmap is small enough already, just return it</span></span><br><span class="line">            <span class="keyword">return</span> bitmap;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> scaleRatio = CALCULATE_BITMAP_MIN_DIMENSION / (<span class="keyword">float</span>) minDimension;</span><br><span class="line">        <span class="keyword">return</span> Bitmap.createScaledBitmap(bitmap,</span><br><span class="line">                Math.round(bitmap.getWidth() * scaleRatio),</span><br><span class="line">                Math.round(bitmap.getHeight() * scaleRatio),</span><br><span class="line">                <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/07/10/Android-Palette的实现原理/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Android-Palette/">Android Palette</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/07/10/Android-Palette的实现原理/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/07/10/Android-Palette的实现原理/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/07/04/模仿ZERO写的一个制作卡片的应用/" title="模仿ZERO写的一个制作卡片的应用" itemprop="url">模仿ZERO写的一个制作卡片的应用</a>
   </h1>
   <p class="article-author">By
@@ -223,9 +289,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/Android/" title="Android">Android<sup>1</sup></a></li>
-		  
-		
+			<li><a href="/categories/Android/" title="Android">Android<sup>2</sup></a></li>
 		  
 		
 		  
@@ -253,6 +317,8 @@
 				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
 			
 		
+			
+				<li><a href="/tags/Android-Palette/" title="Android Palette">Android Palette<sup>1</sup></a></li>
 			
 		
 		</ul>

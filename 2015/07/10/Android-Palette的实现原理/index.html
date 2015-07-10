@@ -1,0 +1,490 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>【转】Android Palette的实现原理 | Shey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Shey">
+    
+
+    
+    <meta name="description" content="Android Palette的实现原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【转】Android Palette的实现原理">
+<meta property="og:url" content="http://www.chenshey.com/2015/07/10/Android-Palette的实现原理/index.html">
+<meta property="og:site_name" content="Shey">
+<meta property="og:description" content="Android Palette的实现原理">
+<meta property="og:image" content="http://www.2cto.com/uploadfile/Collfiles/20150129/201501290838506.png">
+<meta property="og:image" content="http://www.2cto.com/uploadfile/Collfiles/20150129/2015012908391211.gif">
+<meta property="og:updated_time" content="2015-07-10T04:13:47.615Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【转】Android Palette的实现原理">
+<meta name="twitter:description" content="Android Palette的实现原理">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Shey" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/usericon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/author.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/author.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="Shey" title="Shey"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Shey">Shey</a></h1>
+				<h2 class="blog-motto">当才华还撑不起野心时，就应该静下心来学习</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/categories">分类</a></li>
+					
+						<li><a href="/tags">标签</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.chenshey.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/10/Android-Palette的实现原理/" title="【转】Android Palette的实现原理" itemprop="url">【转】Android Palette的实现原理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-10T03:33:53.000Z" itemprop="datePublished"> 发表于 2015-07-10 11:33</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p><strong>转自：<a href="http://www.2cto.com/kf/201501/373806.html" target="_blank" rel="external">http://www.2cto.com/kf/201501/373806.html</a></strong></p>
+<p>　　有时候，看到一些界面上的色彩，心情可能会很舒畅，有时候，看到一些其他色彩，就觉得很讨厌，不爽，看到android L Palette 从图片中提取筛选出来的颜色，觉得都挺好看的，就去了解了下Palette调色板。<br><br>　　看了代码，根据我的理解，大概说说主要的步骤：<br><br>　　<strong>第一步，将图片缩小，再整个过程中，可以降低计算量和减少内存的使用，跟不缩小也能达到一样的效果</strong><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">     * Scale the bitmap down so that it's smallest dimension is</span><br><span class="line">     * &#123;<span class="doctag">@value</span> #CALCULATE_BITMAP_MIN_DIMENSION&#125;px. If &#123;<span class="doctag">@code</span> bitmap&#125; is smaller than this, than it</span><br><span class="line">     * is returned.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">scaleBitmapDown</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> minDimension = Math.min(bitmap.getWidth(), bitmap.getHeight());</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (minDimension &lt;= CALCULATE_BITMAP_MIN_DIMENSION) &#123;</span><br><span class="line">            <span class="comment">// If the bitmap is small enough already, just return it</span></span><br><span class="line">            <span class="keyword">return</span> bitmap;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> scaleRatio = CALCULATE_BITMAP_MIN_DIMENSION / (<span class="keyword">float</span>) minDimension;</span><br><span class="line">        <span class="keyword">return</span> Bitmap.createScaledBitmap(bitmap,</span><br><span class="line">                Math.round(bitmap.getWidth() * scaleRatio),</span><br><span class="line">                Math.round(bitmap.getHeight() * scaleRatio),</span><br><span class="line">                <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>　　<strong>第二步，将缩小后的图片数据，放在一个int 数组里</strong><br></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">    * Factory-method to generate a &#123;<span class="doctag">@link</span> ColorCutQuantizer&#125; from a &#123;<span class="doctag">@link</span> Bitmap&#125; object.</span><br><span class="line">    *</span><br><span class="line">    * <span class="doctag">@param</span> bitmap Bitmap to extract the pixel data from</span><br><span class="line">    * <span class="doctag">@param</span> maxColors The maximum number of colors that should be in the result palette.</span><br><span class="line">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">static</span> ColorCutQuantizer <span class="title">fromBitmap</span><span class="params">(Bitmap bitmap, <span class="keyword">int</span> maxColors)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> width = bitmap.getWidth();</span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span> height = bitmap.getHeight();</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">       <span class="keyword">final</span> <span class="keyword">int</span>[] pixels = <span class="keyword">new</span> <span class="keyword">int</span>[width * height];</span><br><span class="line">       bitmap.getPixels(pixels, <span class="number">0</span>, width, <span class="number">0</span>, <span class="number">0</span>, width, height);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> ColorCutQuantizer(<span class="keyword">new</span> ColorHistogram(pixels), maxColors);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>　　<strong>第三步，将这个int 数组由小到大排序，就相当于，将一张图片一样的颜色堆在一起，然后计算共有多少种颜色，每种颜色它是多大，这些是在一个叫ColorHistogram（颜色直方图）类里面计算的，用颜色直方图来说，就是共有多少柱颜色，每柱颜色有多高</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Class which provides a histogram for RGB values.</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">ColorHistogram</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span>[] mColors;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span>[] mColorCounts;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> mNumberColors;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * A new &#123;<span class="doctag">@link</span> ColorHistogram&#125; instance.</span><br><span class="line">     *</span><br><span class="line">     * <span class="doctag">@param</span> pixels array of image contents</span><br><span class="line">     */</span></span><br><span class="line">    ColorHistogram(<span class="keyword">final</span> <span class="keyword">int</span>[] pixels) &#123;</span><br><span class="line">        <span class="comment">// Sort the pixels to enable counting below</span></span><br><span class="line">        Arrays.sort(pixels);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Count number of distinct colors</span></span><br><span class="line">        mNumberColors = countDistinctColors(pixels);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Create arrays</span></span><br><span class="line">        mColors = <span class="keyword">new</span> <span class="keyword">int</span>[mNumberColors];</span><br><span class="line">        mColorCounts = <span class="keyword">new</span> <span class="keyword">int</span>[mNumberColors];</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Finally count the frequency of each color</span></span><br><span class="line">        countFrequencies(pixels);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * <span class="doctag">@return</span> 获取共用多少柱不同颜色 number of distinct colors in the image.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getNumberOfColors</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mNumberColors;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * <span class="doctag">@return</span> 获取排好序后的不同颜色的数组  an array containing all of the distinct colors in the image.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">int</span>[] getColors() &#123;</span><br><span class="line">        <span class="keyword">return</span> mColors;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/**</span><br><span class="line">     * <span class="doctag">@return</span> 获取保存每一柱有多高的数组 an array containing the frequency of a distinct colors within the image.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">int</span>[] getColorCounts() &#123;</span><br><span class="line">        <span class="keyword">return</span> mColorCounts;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//计算共用多少柱不同颜色</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">countDistinctColors</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span>[] pixels)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pixels.length &lt; <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="comment">// If we have less than 2 pixels we can stop here</span></span><br><span class="line">            <span class="keyword">return</span> pixels.length;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// If we have at least 2 pixels, we have a minimum of 1 color...</span></span><br><span class="line">        <span class="keyword">int</span> colorCount = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> currentColor = pixels[<span class="number">0</span>];</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Now iterate from the second pixel to the end, counting distinct colors</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; pixels.length; i++) &#123;</span><br><span class="line">            <span class="comment">// If we encounter a new color, increase the population</span></span><br><span class="line">            <span class="keyword">if</span> (pixels[i] != currentColor) &#123;</span><br><span class="line">                currentColor = pixels[i];</span><br><span class="line">                colorCount++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> colorCount;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//计算每一柱有多高</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">countFrequencies</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span>[] pixels)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (pixels.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">int</span> currentColorIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> currentColor = pixels[<span class="number">0</span>];</span><br><span class="line"> </span><br><span class="line">        mColors[currentColorIndex] = currentColor;</span><br><span class="line">        mColorCounts[currentColorIndex] = <span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">        Log.i(pixels.length,+ pixels.length);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (pixels.length == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="comment">// If we only have one pixel, we can stop here</span></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Now iterate from the second pixel to the end, population distinct colors</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; pixels.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (pixels[i] == currentColor) &#123;</span><br><span class="line">                <span class="comment">// We've hit the same color as before, increase population</span></span><br><span class="line">                mColorCounts[currentColorIndex]++;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// We've hit a new color, increase index</span></span><br><span class="line">                currentColor = pixels[i];</span><br><span class="line"> </span><br><span class="line">                currentColorIndex++;</span><br><span class="line">                mColors[currentColorIndex] = currentColor;</span><br><span class="line">                mColorCounts[currentColorIndex] = <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>　　<strong>第四步，将各种颜色，根据RGB转HSL算法，得出对应的HSL（H: Hue 色相，S：Saturation 饱和度L Lightness 明度）,根据特定的条件，比如是明度L是否接近白色，黑色，还有一个判断叫isNearRedILine，解释是@return true if the color lies close to the red side of the I line（接近红色私密区域附近？）.，然后根据这三个条件，过滤掉这些颜色，什么是HSL和RGB转HSL算法可以查看下百科，比较有详细说明</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">     * Private constructor.</span><br><span class="line">     *</span><br><span class="line">     * <span class="doctag">@param</span> colorHistogram histogram representing an image's pixel data</span><br><span class="line">     * <span class="doctag">@param</span> maxColors The maximum number of colors that should be in the result palette.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">ColorCutQuantizer</span><span class="params">(ColorHistogram colorHistogram, <span class="keyword">int</span> maxColors)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> rawColorCount = colorHistogram.getNumberOfColors();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span>[] rawColors = colorHistogram.getColors();<span class="comment">//颜色数组</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span>[] rawColorCounts = colorHistogram.getColorCounts();<span class="comment">//对应rawColors每一个颜色数组的大小</span></span><br><span class="line"> </span><br><span class="line">        <span class="comment">// First, lets pack the populations into a SparseIntArray so that they can be easily</span></span><br><span class="line">        <span class="comment">// retrieved without knowing a color's index</span></span><br><span class="line">        mColorPopulations = <span class="keyword">new</span> SparseIntArray(rawColorCount);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; rawColors.length; i++) &#123;</span><br><span class="line">            mColorPopulations.append(rawColors[i], rawColorCounts[i]);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Now go through all of the colors and keep those which we do not want to ignore</span></span><br><span class="line">        mColors = <span class="keyword">new</span> <span class="keyword">int</span>[rawColorCount];</span><br><span class="line">        <span class="keyword">int</span> validColorCount = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> color : rawColors) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!shouldIgnoreColor(color)) &#123;</span><br><span class="line">                mColors[validColorCount++] = color;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        Log.d(mColors length, +mColors.length);</span><br><span class="line">        <span class="keyword">if</span> (validColorCount &lt;= maxColors) &#123;</span><br><span class="line">            <span class="comment">// The image has fewer colors than the maximum requested, so just return the colors</span></span><br><span class="line">            mQuantizedColors = <span class="keyword">new</span> ArrayList&lt;swatch&gt;();</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">final</span> <span class="keyword">int</span> color : mColors) &#123;</span><br><span class="line">                mQuantizedColors.add(<span class="keyword">new</span> Swatch(color, mColorPopulations.get(color)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// We need use quantization to reduce the number of colors</span></span><br><span class="line">            mQuantizedColors = quantizePixels(validColorCount - <span class="number">1</span>, maxColors);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.2cto.com/uploadfile/Collfiles/20150129/201501290838506.png" alt=""></p>
+<p>　　<strong>第五步，根据是各种亮度，饱和度的取值范围，比如有活力的暗色，有活力的亮色，柔和的颜色，柔和的暗色，柔和的亮色，找到对应的颜色</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Swatch <span class="title">findColor</span><span class="params">(<span class="keyword">float</span> targetLuma, <span class="keyword">float</span> minLuma, <span class="keyword">float</span> maxLuma,</span><br><span class="line">                            <span class="keyword">float</span> targetSaturation, <span class="keyword">float</span> minSaturation, <span class="keyword">float</span> maxSaturation)</span> </span>&#123;</span><br><span class="line">       Swatch max = <span class="keyword">null</span>;</span><br><span class="line">       <span class="keyword">float</span> maxValue = <span class="number">0f</span>;</span><br><span class="line"> </span><br><span class="line">       <span class="keyword">for</span> (Swatch swatch : mSwatches) &#123;</span><br><span class="line">           <span class="keyword">final</span> <span class="keyword">float</span> sat = swatch.getHsl()[<span class="number">1</span>];</span><br><span class="line">           <span class="keyword">final</span> <span class="keyword">float</span> luma = swatch.getHsl()[<span class="number">2</span>];</span><br><span class="line"> </span><br><span class="line">           <span class="keyword">if</span> (sat &gt;= minSaturation &amp;&amp; sat &lt;= maxSaturation &amp;&amp;</span><br><span class="line">                   luma &gt;= minLuma &amp;&amp; luma &lt;= maxLuma &amp;&amp;</span><br><span class="line">                   !isAlreadySelected(swatch)) &#123;</span><br><span class="line">               <span class="keyword">float</span> thisValue = createComparisonValue(sat, targetSaturation, luma, targetLuma,</span><br><span class="line">                       swatch.getPopulation(), mHighestPopulation);</span><br><span class="line">               <span class="keyword">if</span> (max == <span class="keyword">null</span> || thisValue &gt; maxValue) &#123;</span><br><span class="line">                   max = swatch;</span><br><span class="line">                   maxValue = thisValue;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"> </span><br><span class="line">       <span class="keyword">return</span> max;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://www.2cto.com/uploadfile/Collfiles/20150129/2015012908391211.gif" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Android-Palette/">Android Palette</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	<div class="share-jiathis">
+	  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+     ralateuid:{"tsina":"2833981010"},hideMore:false}
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+2041122" charset="utf-8"></script>      
+
+	 </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/07/04/模仿ZERO写的一个制作卡片的应用/"  title="模仿ZERO写的一个制作卡片的应用">
+ <strong>下一篇：</strong><br/> 
+ <span>模仿ZERO写的一个制作卡片的应用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/07/10/Android-Palette的实现原理/" data-title="【转】Android Palette的实现原理" data-url="http://www.chenshey.com/2015/07/10/Android-Palette的实现原理/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Android/" title="Android">Android<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/随笔/" title="随笔">随笔<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/源码/" title="源码">源码<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Github/" title="Github">Github<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Android-Palette/" title="Android Palette">Android Palette<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/taoweiji/" target="_blank" title="陶伟基-博客园">陶伟基-博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.huxiu.com/" target="_blank" title="虎嗅网">虎嗅网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=3&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2833981010&verifier=12cfda6a&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 落霞与孤鹜齐飞，秋水共长天一色 <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2833981010" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/ShelbyYu" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by  © 2015 
+		
+		<a href="/about" target="_blank" title="Shey">Shey</a>
+		
+		<script src="http://count.2881.com/count/count.asp?id=59854&sx=1&ys=35" language="JavaScript" charset="gbk"></script>
+		<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		</p>
+
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"chenshey"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fba4eaf4f0addda0f2b56e83cf028b53b' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
