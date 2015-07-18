@@ -85,6 +85,216 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/07/17/Android中Handler可能引起的内存泄露/" title="Android中Handler可能引起的内存泄露" itemprop="url">Android中Handler可能引起的内存泄露</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-17T14:26:26.000Z" itemprop="datePublished"> 发表于 2015-07-17 22:26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="前言">前言</h2><p>　　在Android应用程序的开发中，<code>Handler</code>用作异步操作机制，主要还是用于解决UI线程安全的问题。如果搞Android开发的没用过<code>Handler</code>，只能说你在装逼。可以说它是我们常用的，而正因为常用，所以很多人经常忽略了它的优化问题，只想简简单单地用。从而呢，一不小心，二不小心，三不小心，然后就造成了内存泄露。</p>
+<p>　　<strong>就这样使用匿名内部类的方式：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Handler mLeakyHandler = <span class="keyword">new</span> Handler() &#123;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">      <span class="comment">// ... </span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="为什么可能会造成内存泄露呢？">为什么可能会造成内存泄露呢？</h2><p>　　像上面的代码，可能会造成可怕的内存泄露。也许不是现在，也许在你不断地扩充功能需求之后，在不经意间，突然就冒出：<code>Out Of Memory</code>。<code>OOM</code>可是程序猿的噩梦啊。</p>
+<p>　　那么，它是怎么会可能造成<code>OOM</code>的呢？为什么呢？</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/07/17/Android中Handler可能引起的内存泄露/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Handler/">Handler</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/07/17/Android中Handler可能引起的内存泄露/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/07/17/Android中Handler可能引起的内存泄露/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/17/Bitmap的复用/" title="【转】Bitmap的复用" itemprop="url">【转】Bitmap的复用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-17T05:29:31.000Z" itemprop="datePublished"> 发表于 2015-07-17 13:29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p><strong>转自：<a href="http://blog.aaapei.com/article/2015/02/bookingcom-androidke-hu-duan-de-bitmapfu-yong">http://blog.aaapei.com/article/2015/02/bookingcom-androidke-hu-duan-de-bitmapfu-yong</a></strong></p>
+</blockquote>
+<h3 id="前言">前言</h3><p>　　被鞭炮吵得睡不着觉，rss中找一篇简单的文档翻译下，原文链接：<a href="http://blog.booking.com/android-reuse-bitmaps.html，大部分团队应该都做过这个bitmap优化，不过估计设置过BitmapFactory.Options.inTempStorage参数的应该不多">http://blog.booking.com/android-reuse-bitmaps.html，大部分团队应该都做过这个bitmap优化，不过估计设置过BitmapFactory.Options.inTempStorage参数的应该不多</a> :)</p>
+<p>　　不幸的是，增加了这个新功能后，发现这个应用的内存消耗增长了20%。图片集的界面的滑动有明显的卡顿，经定位，我们发现viewpager加载图片时的gc问题造成了以上的问题。由于应用的图片资源多；控件布局层次复杂；数据量较大，造成内存的申请很容易触发GC。</p>
+<p>　　当申请bitmap内存时，logcat输出信息如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">GC_FOR_ALLOC freed <span class="number">3255</span>K, <span class="number">20</span>% free <span class="number">21813</span>K/<span class="number">26980</span>K, paused <span class="number">62</span>ms, total <span class="number">62</span>ms</span><br><span class="line">GC_FOR_ALLOC freed <span class="number">710</span>K, <span class="number">20</span>% free <span class="number">30242</span>K/<span class="number">37740</span>K, paused <span class="number">72</span>ms, total <span class="number">72</span>ms</span><br><span class="line">GC_FOR_ALLOC freed &lt;<span class="number">1</span>K, <span class="number">20</span>% free <span class="number">31778</span>K/<span class="number">39280</span>K, paused <span class="number">74</span>ms, total <span class="number">74</span>ms</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/07/17/Bitmap的复用/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Bitmap/">Bitmap</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/07/17/Bitmap的复用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/07/17/Bitmap的复用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/07/17/打破Android应用65K方法魔咒/" title="【转】打破Android应用65K方法魔咒" itemprop="url">【转】打破Android应用65K方法魔咒</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-17T03:46:41.000Z" itemprop="datePublished"> 发表于 2015-07-17 11:46</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p><strong>原文地址：<a href="http://blog.isming.me/2015/05/01/android-multi-dex/，转载请注明出处。">http://blog.isming.me/2015/05/01/android-multi-dex/，转载请注明出处。</a></strong><br></p>
+</blockquote>
+<p>近日，我们的应用，在编译的时候不幸的遇到这个错误</p>
+<blockquote>
+<p>Conversion to Dalvik format failed: Unable to execute dex: method ID not in [0, 0xffff]: 65536</p>
+</blockquote>
+<p>　　这才让我意识到原来我们的程序中，方法数已经超过了65536。在之前，已经知道了android系统的java虚拟机dalvik在执行java程序时，使用原生类型short来索引dex文件中的方法，因此方法数就呗限制在65536了。之前我一直以为，这个数量已经很大了，不会达到上限，结果今天就达到了。<br></p>
+<p>　　不过这个东西呢，我们也是很容易的进行解决的，因为，就在去年不久前，google官方提供了多dex的支持库，因此，我们可以很简单的解决这个问题。<br><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/07/17/打破Android应用65K方法魔咒/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android/">Android</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/65K方法/">65K方法</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/07/17/打破Android应用65K方法魔咒/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/07/17/打破Android应用65K方法魔咒/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/07/10/Android-Palette的实现原理/" title="【转】Android Palette的实现原理" itemprop="url">【转】Android Palette的实现原理</a>
   </h1>
   <p class="article-author">By
@@ -289,7 +499,7 @@
 		<ul>
 		
 		  
-			<li><a href="/categories/Android/" title="Android">Android<sup>2</sup></a></li>
+			<li><a href="/categories/Android/" title="Android">Android<sup>5</sup></a></li>
 		  
 		
 		  
@@ -310,11 +520,23 @@
 			
 		
 			
+				<li><a href="/tags/65K方法/" title="65K方法">65K方法<sup>1</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Github/" title="Github">Github<sup>1</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bitmap/" title="Bitmap">Bitmap<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Handler/" title="Handler">Handler<sup>1</sup></a></li>
 			
 		
 			
@@ -331,7 +553,7 @@
         
           <li>
             
-            	<a href="http://www.cnblogs.com/taoweiji/" target="_blank" title="陶伟基-博客园">陶伟基-博客园</a>
+            	<a href="http://www.cnblogs.com/taoweiji/" target="_blank" title="陶伟基">陶伟基</a>
             
           </li>
         
@@ -344,6 +566,18 @@
           <li>
             
             	<a href="http://www.huxiu.com/" target="_blank" title="虎嗅网">虎嗅网</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.jcodecraeer.com/" target="_blank" title="泡在网上的日子">泡在网上的日子</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://droidyue.com/" target="_blank" title="技术小黑屋">技术小黑屋</a>
             
           </li>
         
