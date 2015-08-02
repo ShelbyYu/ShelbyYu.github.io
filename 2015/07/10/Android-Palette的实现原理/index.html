@@ -19,7 +19,7 @@
 <meta property="og:description" content="Android Palette的实现原理">
 <meta property="og:image" content="http://www.2cto.com/uploadfile/Collfiles/20150129/201501290838506.png">
 <meta property="og:image" content="http://www.2cto.com/uploadfile/Collfiles/20150129/2015012908391211.gif">
-<meta property="og:updated_time" content="2015-07-10T04:13:47.615Z">
+<meta property="og:updated_time" content="2015-07-19T09:05:16.071Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【转】Android Palette的实现原理">
 <meta name="twitter:description" content="Android Palette的实现原理">
@@ -106,7 +106,9 @@
 		
 		</div>
 		
-		<p><strong>转自：<a href="http://www.2cto.com/kf/201501/373806.html" target="_blank" rel="external">http://www.2cto.com/kf/201501/373806.html</a></strong></p>
+		<blockquote>
+<p><strong>转自：<a href="http://www.2cto.com/kf/201501/373806.html" target="_blank" rel="external">http://www.2cto.com/kf/201501/373806.html</a></strong></p>
+</blockquote>
 <p>　　有时候，看到一些界面上的色彩，心情可能会很舒畅，有时候，看到一些其他色彩，就觉得很讨厌，不爽，看到android L Palette 从图片中提取筛选出来的颜色，觉得都挺好看的，就去了解了下Palette调色板。<br><br>　　看了代码，根据我的理解，大概说说主要的步骤：<br><br>　　<strong>第一步，将图片缩小，再整个过程中，可以降低计算量和减少内存的使用，跟不缩小也能达到一样的效果</strong><br></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">     * Scale the bitmap down so that it's smallest dimension is</span><br><span class="line">     * &#123;<span class="doctag">@value</span> #CALCULATE_BITMAP_MIN_DIMENSION&#125;px. If &#123;<span class="doctag">@code</span> bitmap&#125; is smaller than this, than it</span><br><span class="line">     * is returned.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">scaleBitmapDown</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> minDimension = Math.min(bitmap.getWidth(), bitmap.getHeight());</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (minDimension &lt;= CALCULATE_BITMAP_MIN_DIMENSION) &#123;</span><br><span class="line">            <span class="comment">// If the bitmap is small enough already, just return it</span></span><br><span class="line">            <span class="keyword">return</span> bitmap;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> scaleRatio = CALCULATE_BITMAP_MIN_DIMENSION / (<span class="keyword">float</span>) minDimension;</span><br><span class="line">        <span class="keyword">return</span> Bitmap.createScaledBitmap(bitmap,</span><br><span class="line">                Math.round(bitmap.getWidth() * scaleRatio),</span><br><span class="line">                Math.round(bitmap.getHeight() * scaleRatio),</span><br><span class="line">                <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
@@ -226,7 +228,7 @@
 		  
 		
 		  
-			<li><a href="/categories/随笔/" title="随笔">随笔<sup>1</sup></a></li>
+			<li><a href="/categories/随笔/" title="随笔">随笔<sup>2</sup></a></li>
 		  
 		
 		</ul>
@@ -294,13 +296,25 @@
         
           <li>
             
-            	<a href="http://www.jcodecraeer.com/" target="_blank" title="泡在网上的日子">泡在网上的日子</a>
+            	<a href="http://www.techug.com/" target="_blank" title="程序师">程序师</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.ruanyq.ga/index.php/2015/06/25/hello-world/" target="_blank" title="阮易强">阮易强</a>
             
           </li>
         
           <li>
             
             	<a href="http://droidyue.com/" target="_blank" title="技术小黑屋">技术小黑屋</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.jcodecraeer.com/" target="_blank" title="泡在网上的日子">泡在网上的日子</a>
             
           </li>
         

@@ -85,6 +85,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/08/03/是我错了吗？/" title="是我错了吗？（深夜来一发）" itemprop="url">是我错了吗？（深夜来一发）</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-02T16:30:05.000Z" itemprop="datePublished"> 发表于 2015-08-03 00:30</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　今天下午，开开心心地拖着疲惫的身躯，从深圳北站坐高铁回到了广州南站。在深圳北站候车时，简直被它的恢宏，庞大，所震撼了，原谅我这个没见过世面的小屁孩。人类之所以成为人类，不正是因为强大的思考力，创造力吗？！才会站在了地球食物链的最顶端！<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/08/03/是我错了吗？/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/随笔/">随笔</a>
+</div>
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/08/03/是我错了吗？/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/03/是我错了吗？/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/07/17/Android中Handler可能引起的内存泄露/" title="Android中Handler可能引起的内存泄露" itemprop="url">Android中Handler可能引起的内存泄露</a>
   </h1>
   <p class="article-author">By
@@ -308,7 +367,9 @@
 </header>
     <div class="article-content">
         
-        <p><strong>转自：<a href="http://www.2cto.com/kf/201501/373806.html">http://www.2cto.com/kf/201501/373806.html</a></strong></p>
+        <blockquote>
+<p><strong>转自：<a href="http://www.2cto.com/kf/201501/373806.html">http://www.2cto.com/kf/201501/373806.html</a></strong></p>
+</blockquote>
 <p>　　有时候，看到一些界面上的色彩，心情可能会很舒畅，有时候，看到一些其他色彩，就觉得很讨厌，不爽，看到android L Palette 从图片中提取筛选出来的颜色，觉得都挺好看的，就去了解了下Palette调色板。<br><br>　　看了代码，根据我的理解，大概说说主要的步骤：<br><br>　　<strong>第一步，将图片缩小，再整个过程中，可以降低计算量和减少内存的使用，跟不缩小也能达到一样的效果</strong><br></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">     * Scale the bitmap down so that it's smallest dimension is</span><br><span class="line">     * &#123;<span class="doctag">@value</span> #CALCULATE_BITMAP_MIN_DIMENSION&#125;px. If &#123;<span class="doctag">@code</span> bitmap&#125; is smaller than this, than it</span><br><span class="line">     * is returned.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">scaleBitmapDown</span><span class="params">(Bitmap bitmap)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> minDimension = Math.min(bitmap.getWidth(), bitmap.getHeight());</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">if</span> (minDimension &lt;= CALCULATE_BITMAP_MIN_DIMENSION) &#123;</span><br><span class="line">            <span class="comment">// If the bitmap is small enough already, just return it</span></span><br><span class="line">            <span class="keyword">return</span> bitmap;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">float</span> scaleRatio = CALCULATE_BITMAP_MIN_DIMENSION / (<span class="keyword">float</span>) minDimension;</span><br><span class="line">        <span class="keyword">return</span> Bitmap.createScaledBitmap(bitmap,</span><br><span class="line">                Math.round(bitmap.getWidth() * scaleRatio),</span><br><span class="line">                Math.round(bitmap.getHeight() * scaleRatio),</span><br><span class="line">                <span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
         
@@ -503,7 +564,7 @@
 		  
 		
 		  
-			<li><a href="/categories/随笔/" title="随笔">随笔<sup>1</sup></a></li>
+			<li><a href="/categories/随笔/" title="随笔">随笔<sup>2</sup></a></li>
 		  
 		
 		</ul>
@@ -571,13 +632,25 @@
         
           <li>
             
-            	<a href="http://www.jcodecraeer.com/" target="_blank" title="泡在网上的日子">泡在网上的日子</a>
+            	<a href="http://www.techug.com/" target="_blank" title="程序师">程序师</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.ruanyq.ga/index.php/2015/06/25/hello-world/" target="_blank" title="阮易强">阮易强</a>
             
           </li>
         
           <li>
             
             	<a href="http://droidyue.com/" target="_blank" title="技术小黑屋">技术小黑屋</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.jcodecraeer.com/" target="_blank" title="泡在网上的日子">泡在网上的日子</a>
             
           </li>
         
