@@ -4,23 +4,23 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>【转】打破Android应用65K方法魔咒 | Shey</title>
+    <title>没有星空的夜晚 | Shey</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Shey">
     
 
     
-    <meta name="description" content="打破Android应用65K方法魔咒">
+    <meta name="description" content="没有星空的夜晚">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【转】打破Android应用65K方法魔咒">
-<meta property="og:url" content="http://www.chenshey.com/2015/07/17/打破Android应用65K方法魔咒/index.html">
+<meta property="og:title" content="没有星空的夜晚">
+<meta property="og:url" content="http://www.chenshey.com/2015/08/09/没有星空的夜晚/index.html">
 <meta property="og:site_name" content="Shey">
-<meta property="og:description" content="打破Android应用65K方法魔咒">
-<meta property="og:updated_time" content="2015-07-17T03:54:04.943Z">
+<meta property="og:description" content="没有星空的夜晚">
+<meta property="og:updated_time" content="2015-08-09T13:21:23.109Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="【转】打破Android应用65K方法魔咒">
-<meta name="twitter:description" content="打破Android应用65K方法魔咒">
+<meta name="twitter:title" content="没有星空的夜晚">
+<meta name="twitter:description" content="没有星空的夜晚">
 
     
     <link rel="alternative" href="/atom.xml" title="Shey" type="application/atom+xml">
@@ -84,14 +84,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/07/17/打破Android应用65K方法魔咒/" title="【转】打破Android应用65K方法魔咒" itemprop="url">【转】打破Android应用65K方法魔咒</a>
+      <a href="/2015/08/09/没有星空的夜晚/" title="没有星空的夜晚" itemprop="url">没有星空的夜晚</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
 		
   <p class="article-time">
-    <time datetime="2015-07-17T03:46:41.000Z" itemprop="datePublished"> 发表于 2015-07-17 11:46</time>
+    <time datetime="2015-08-09T12:55:23.000Z" itemprop="datePublished"> 发表于 2015-08-09 20:55</time>
     
   </p>
 </header>
@@ -100,23 +100,15 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#开发工具升级"><span class="toc-number">1.</span> <span class="toc-text">开发工具升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置build-gradle"><span class="toc-number">2.</span> <span class="toc-text">配置build.gradle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#让应用支持多dex"><span class="toc-number">3.</span> <span class="toc-text">让应用支持多dex</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他"><span class="toc-number">4.</span> <span class="toc-text">其他</span></a></li></ol>
+			
 		
 		</div>
 		
-		<blockquote>
-<p><strong>原文地址：<a href="http://blog.isming.me/2015/05/01/android-multi-dex/，转载请注明出处。" target="_blank" rel="external">http://blog.isming.me/2015/05/01/android-multi-dex/，转载请注明出处。</a></strong><br></p>
-</blockquote>
-<p>近日，我们的应用，在编译的时候不幸的遇到这个错误</p>
-<blockquote>
-<p>Conversion to Dalvik format failed: Unable to execute dex: method ID not in [0, 0xffff]: 65536</p>
-</blockquote>
-<p>　　这才让我意识到原来我们的程序中，方法数已经超过了65536。在之前，已经知道了android系统的java虚拟机dalvik在执行java程序时，使用原生类型short来索引dex文件中的方法，因此方法数就呗限制在65536了。之前我一直以为，这个数量已经很大了，不会达到上限，结果今天就达到了。<br></p>
-<p>　　不过这个东西呢，我们也是很容易的进行解决的，因为，就在去年不久前，google官方提供了多dex的支持库，因此，我们可以很简单的解决这个问题。<br><br><a id="more"></a></p>
-<h3 id="开发工具升级">开发工具升级</h3><p>将android sdks build tools 和android support library要升级到最新的，这个使用android sdks manager很容易就完成了。</p>
-<h3 id="配置build-gradle">配置build.gradle</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">android &#123; </span><br><span class="line">compileSdkVersion 21 </span><br><span class="line">buildToolsVersion "21.1.0" </span><br><span class="line">defaultConfig &#123;     </span><br><span class="line">...     </span><br><span class="line">minSdkVersion 14     </span><br><span class="line">targetSdkVersion 21     </span><br><span class="line">...     </span><br><span class="line">// Enabling multidex support.     </span><br><span class="line">multiDexEnabled true </span><br><span class="line">&#125; </span><br><span class="line">... </span><br><span class="line">&#125; </span><br><span class="line">dependencies&#123; </span><br><span class="line">compile 'com.android.support:multidex:1.0.0’ //dependencies</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="让应用支持多dex">让应用支持多dex</h3><p>androidManifest.xml中application中声明android.support.multidex.MultiDexApplication;<br>或自己定义一个Application类，继承自MultiDexApplication；<br>或者自己定义的Application类，在attachBaseContext()方法中，添加MultiDex.install(this);</p>
-<h3 id="其他">其他</h3><p>　　通过上面的方法即可轻松完成多dex，不过在低版本的android系统（低于android4.0）可能会有bug出现，还要多进行测试。究其原因，其实我们的app，自己写的代码现在其实不是很多，代码中使用了大量的第三方sdk，以及其他的一些功能集成。<br>下面，就要想办法，减少第三方的功能库了。这里跟大家分享一下解决方案。<br>参考资料： <a href="http://developer.android.com/tools/building/multidex.html" target="_blank" rel="external">http://developer.android.com/tools/building/multidex.html</a></p>
+		<p>　　夜晚，我又来装逼了。</p>
+<p>　　虽然，现在才八九点。但是，我喜欢关闭宿舍的灯管，开着自己白炽光的台灯。周围一片黑暗，而面前一片光明。最安详，最寂静。在这种时候，心绪也最容易飘飞。不得不写点文字，记录心情。我也有文艺的一次。（这时候，舍友说想开灯管看书。平时不怎么看书，现在却想装逼。已经被我驳回！好残忍，剥夺了他看书的小小渴望。唉。。。）<br><a id="more"></a><br>　　昨天，几个高中好同学过来大学城玩耍。一个说过来散散心，一个之前说想过来找我聊人生，另一个，因为前两个要过来，所以又拉了过来。趁此机会，共聚一堂。吃饭，唱K，打牌，打羽毛球，加起来还不到24个小时。甚是开心，充足。上一次熬夜打牌，还是一年半前的聚会啊。昨晚的吃饭中，也聊到了我的一个痛点。毕业三年，也没去探过对我很好的英语老师王凯远。惭愧。如果，过年回家再不去探望，这个大学怕是没机会了。</p>
+<p>　　在之前，我可能不想那么频繁的朋友相聚。不喜欢热闹，喜欢一个人静静地静静地，干着自己的事情。而现在，自己周一到周五的大部分时间都在上班。唯有周末，可以自由自在，轻松愉快。来到了人生的这个阶段，也该注重一下自己的生活了。“生活”，在心中的比重越来越大，不再是“学习”。就算是现在的实习工作，也绝不能把它当做一种理所应当的应付。反正，不以物喜，不以己悲。每天活在生活里，开开心心就是真。当生活成为了一种将就，跟咸鱼有什么区别。</p>
+<p>　　总而言之，愉悦的工作，愉快的周末。朋友聚会，社交活动，如果有，尽可能地参加。人来到了这个社会，最终也是要走向社会。不是世俗，不是阿谀奉盛。是实实在在的生活。</p>
+<p>　　也许，有人说，我浪费时间在感伤上。我觉得嘛，我首先是一个人，然后才会是一台机器。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -124,14 +116,9 @@
 
 <div class="article-categories">
   <span></span>
-  <a class="article-category-link" href="/categories/Android/">Android</a>
+  <a class="article-category-link" href="/categories/随笔/">随笔</a>
 </div>
 
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/65K方法/">65K方法</a>
-  </div>
 
 </div>
 
@@ -175,19 +162,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/07/17/Bitmap的复用/" title="【转】Bitmap的复用">
-  <strong>上一篇：</strong><br/>
-  <span>
-  【转】Bitmap的复用</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/07/10/Android-Palette的实现原理/"  title="【转】Android Palette的实现原理">
+<a href="/2015/08/03/是我错了吗？/"  title="是我错了吗？（深夜来一发）">
  <strong>下一篇：</strong><br/> 
- <span>【转】Android Palette的实现原理
+ <span>是我错了吗？（深夜来一发）
 </span>
 </a>
 </div>
@@ -196,7 +175,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2015/07/17/打破Android应用65K方法魔咒/" data-title="【转】打破Android应用65K方法魔咒" data-url="http://www.chenshey.com/2015/07/17/打破Android应用65K方法魔咒/"></div>
+	<div class="ds-thread" data-thread-key="2015/08/09/没有星空的夜晚/" data-title="没有星空的夜晚" data-url="http://www.chenshey.com/2015/08/09/没有星空的夜晚/"></div>
 </section>
 
 
@@ -206,7 +185,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#开发工具升级"><span class="toc-number">1.</span> <span class="toc-text">开发工具升级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置build-gradle"><span class="toc-number">2.</span> <span class="toc-text">配置build.gradle</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#让应用支持多dex"><span class="toc-number">3.</span> <span class="toc-text">让应用支持多dex</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他"><span class="toc-number">4.</span> <span class="toc-text">其他</span></a></li></ol>
+ 
  
   </div>
 
