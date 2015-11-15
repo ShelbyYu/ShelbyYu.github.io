@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/11/15/携程Android-App插件化和动态加载实践/" title="【转】携程Android App插件化和动态加载实践" itemprop="url">【转】携程Android App插件化和动态加载实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Shey" target="_blank" itemprop="author">Shey</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-15T02:11:09.000Z" itemprop="datePublished"> 发表于 2015-11-15 10:11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="http://www.infoq.com/cn/articles/ctrip-android-dynamic-loading">作者 白杰，陈浩然 发布于 2015年11月4日</a></p>
+<p>　　编者按：本文为携程无线基础团队投稿，介绍它们已经开源的Android动态加载解决方案<a href="https://github.com/CtripMobile/DynamicAPK">DynamicAPK</a>，本文作者之一，携程无线研发总监陈浩然将会在<a href="http://www.archsummit.com/">ArchSummit北京2015架构师大会</a>上分享架构优化相关内容，欢迎关注。</p>
+<p>　　携程Android App的插件化和动态加载框架已上线半年，经历了初期的探索和持续的打磨优化，新框架和工程配置经受住了生产实践的考验。本文将详细介绍Android平台插件式开发和动态加载技术的原理和实现细节，回顾携程Android App的架构演化过程，期望我们的经验能帮助到更多的Android工程师。</p>
+<h2 id="需求驱动">需求驱动</h2><p>　　2014年，随着业务发展需要和携程无线部门的拆分，各业务产品模块归属到各业务BU，原有携程无线App开发团队被分为基础框架、酒店、机票、火车票等多个开发团队，从此携程App的开发和发布进入了一个全新模式。在这种模式下，开发沟通成本大大提高，之前的协作模式难以为继，需要新的开发模式和技术解决需求问题。</p>
+<p>　　另一方面，从技术上来说，携程早在2012年就触到Android平台史上最坑天花板（没有之一）：65535方法数问题。旧方案是把所有第三方库放到第二个dex中，并且利用Facebook当年发现的<a href="https://www.facebook.com/notes/facebook-engineering/under-the-hood-dalvik-patch-for-facebook-for-android/10151345597798920">hack方法</a>扩大点LinearAllocHdr分配空间（5M提升到8M），但随着代码的膨胀，旧方案也逐渐捉襟见肘。拆or不拆，根本不是可考虑问题，继续拆分dex是我们的唯一出路。问题在于：怎么拆才比较聪明？</p>
+<p>　　其次，随着组织架构调整的影响，给我们的App质量控制带来极高的挑战，这种紧张和压力让我们的开发团队心力憔悴。此时除了流着口水羡慕前端同事们的在线更新持续发布能力之外，难道就没有办法解决Native架构这一根本性缺陷了吗？NO！插件化动态加载带来的额外好处就是客户端的热部署能力。</p>
+<p>　　从以上几点根本性需求可以看出，插件化动态加载架构方案会为我们带来多么巨大的收益，除此之外还有诸多好处：</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/11/15/携程Android-App插件化和动态加载实践/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/11/15/携程Android-App插件化和动态加载实践/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/15/携程Android-App插件化和动态加载实践/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/08/09/没有星空的夜晚/" title="没有星空的夜晚" itemprop="url">没有星空的夜晚</a>
   </h1>
   <p class="article-author">By
